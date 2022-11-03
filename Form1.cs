@@ -84,10 +84,18 @@ namespace ReVanced_Patcher.NET
         {
             btn_DownloadReVanced.Enabled = false;
 
+            label_CLI_Version.Text += "  Downloading...";
             await Task.Run(() => ReVanced.DownloadFile(ReVanced.CLI, Path.GetFileName(ReVanced.CLI)));
+            label_CLI_Version.Text = Path.GetFileName(ReVanced.CLI);
+
+            label_Patches_Version.Text += "  Downloading...";
             await Task.Run(() => ReVanced.DownloadFile(ReVanced.Patches, Path.GetFileName(ReVanced.Patches)));
             await Task.Run(() => ReVanced.DownloadFile(ReVanced.Patches_Json, Path.GetFileName(ReVanced.Patches_Json)));
+            label_Patches_Version.Text = Path.GetFileName(ReVanced.Patches);
+
+            label_Integrations_Version.Text += "  Downloading...";
             await Task.Run(() => ReVanced.DownloadFile(ReVanced.Integrations, Path.GetFileName(ReVanced.Integrations)));
+            label_Integrations_Version.Text = Path.GetFileName(ReVanced.Integrations);
 
             ParsePatches();
         }

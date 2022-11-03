@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ReVanced_Patcher.NET
 {
@@ -18,16 +19,18 @@ namespace ReVanced_Patcher.NET
             var jdkDir = Directory.GetDirectories(Environment.CurrentDirectory, "jdk*");
             foreach (var dir in jdkDir.Append(""))
             {
-                var javaExe = "java.exe";
+                var exe = "java.exe";
+
                 if (!string.IsNullOrEmpty(dir))
-                {
-                    javaExe = Path.Join(dir, "\\bin\\java.exe");
-                    if (!File.Exists(javaExe)) continue;
-                }
-                var result = ProcessOutput(javaExe, "--version");
+                    exe = Path.Join(dir, "\\bin\\java.exe");
+
+                if (!File.Exists(exe))
+                    continue;
+
+                var result = ProcessOutput(exe, "--version");
                 if (result.output.Contains("OpenJDK") && result.output.Contains("Microsoft"))
                 {
-                    JavaExe = javaExe.Replace(Environment.CurrentDirectory + "\\", "");
+                    JavaExe = exe.Replace(Environment.CurrentDirectory + "\\", "");
                 }
             }
             return string.IsNullOrEmpty(JavaExe);
@@ -45,19 +48,26 @@ namespace ReVanced_Patcher.NET
 
         private static (string output, string error) ProcessOutput(string FileName, string Arguments)
         {
-            var p = Process.Start(new ProcessStartInfo
+            try
             {
-                FileName = FileName,
-                Arguments = Arguments,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            });
-            p!.WaitForExit();
-            var output = p.StandardOutput.ReadToEnd();
-            var error = p.StandardError.ReadToEnd();
-            return (output, error);
+                var p = Process.Start(new ProcessStartInfo
+                {
+                    FileName = FileName,
+                    Arguments = Arguments,
+                    UseShellExecute = false,
+                    CreateNoWindow = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true
+                });
+                p!.WaitForExit();
+                var output = p.StandardOutput.ReadToEnd();
+                var error = p.StandardError.ReadToEnd();
+                return (output, error);
+            }
+            catch (Exception)
+            {
+                return (string.Empty, string.Empty);
+            }
         }
     }
 }
