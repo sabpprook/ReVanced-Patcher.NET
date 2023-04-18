@@ -11,9 +11,10 @@ namespace ReVanced_Patcher.NET
 {
     internal class ReVanced
     {
-        private static string CLI_API { get; } = "https://api.github.com/repos/revanced/revanced-cli/releases/latest";
-        private static string Patches_API { get; } = "https://api.github.com/repos/revanced/revanced-patches/releases/latest";
-        private static string Integrations_API { get; } = "https://api.github.com/repos/revanced/revanced-integrations/releases/latest";
+        private static string CLI_API { get; } = "https://api.github.com/repos/{0}/revanced-cli/releases/latest";
+        private static string Patches_API { get; } = "https://api.github.com/repos/{0}/revanced-patches/releases/latest";
+        private static string Integrations_API { get; } = "https://api.github.com/repos/{0}/revanced-integrations/releases/latest";
+        public static string? Variant { get; set; } = "revanced";
         public static string? CLI { get; set; } = string.Empty;
         public static string? CLI_Version { get; set; }
         public static string? Patches { get; set; } = string.Empty;
@@ -27,7 +28,7 @@ namespace ReVanced_Patcher.NET
         {
             if (UseGithub)
             {
-                var release = Github.GetRelease(CLI_API);
+                var release = Github.GetRelease(string.Format(CLI_API, Variant));
                 if (release?.assets?.Count > 0)
                 {
                     CLI = release.assets[0].browser_download_url;
@@ -44,7 +45,7 @@ namespace ReVanced_Patcher.NET
         {
             if (UseGithub)
             {
-                var release = Github.GetRelease(Patches_API);
+                var release = Github.GetRelease(string.Format(Patches_API, Variant));
                 if (release?.assets?.Count > 0)
                 {
                     Patches = release.assets.Where(x => x.browser_download_url!.Contains(".jar")).First().browser_download_url;
@@ -65,7 +66,7 @@ namespace ReVanced_Patcher.NET
         {
             if (UseGithub)
             {
-                var release = Github.GetRelease(Integrations_API);
+                var release = Github.GetRelease(string.Format(Integrations_API, Variant));
                 if (release?.assets?.Count > 0)
                 {
                     Integrations = release.assets[0].browser_download_url;
@@ -74,7 +75,7 @@ namespace ReVanced_Patcher.NET
                 return;
             }
 
-            var search = Directory.GetFiles(Environment.CurrentDirectory, "app-release-unsigned.apk");
+            var search = Directory.GetFiles(Environment.CurrentDirectory, "revanced-integrations*.apk");
             if (search.Length > 0) Integrations = search[0];
         }
 
@@ -88,7 +89,7 @@ namespace ReVanced_Patcher.NET
 
         public class Patch
         {
-            public string? name { get; set; }
+            public string name { get; set; } = string.Empty;
             public string? description { get; set; }
             public string? version { get; set; }
             public bool excluded { get; set; }
@@ -96,6 +97,19 @@ namespace ReVanced_Patcher.NET
             public List<Option>? options { get; set; }
             public List<string>? dependencies { get; set; }
             public List<CompatiblePackage>? compatiblePackages { get; set; }
+            public bool isChecked
+            {
+                get
+                {
+                    if (name.Contains("-ads")) return true;
+                    if (name.Contains("-revancify")) return true;
+                    if (name.StartsWith("custom-")) return false;
+                    if (name.StartsWith("disable-")) return false;
+                    if (name.StartsWith("hide-")) return false;
+                    return true;
+                }
+            }
+
             public override string ToString()
             {
                 return string.IsNullOrEmpty(name) ? "null" : name;

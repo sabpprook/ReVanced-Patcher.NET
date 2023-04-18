@@ -12,7 +12,7 @@ namespace ReVanced_Patcher.NET
     internal class Java
     {
         public static string JavaExe { get; set; } = string.Empty;
-        private static string OpenJDK { get; } = "https://aka.ms/download-jdk/microsoft-jdk-17.0.5-windows-x64.zip";
+        private static string OpenJDK { get; } = "https://aka.ms/download-jdk/microsoft-jdk-17.0.6-windows-x64.zip";
 
         public static bool CheckVersion()
         {

@@ -14,6 +14,8 @@ namespace ReVanced_Patcher.NET
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            comboBox_Variant.SelectedIndex = 0;
+
             btn_DownloadJDK.Enabled = Java.CheckVersion();
             label_Java_SDK.Text = Java.JavaExe;
 
@@ -35,9 +37,9 @@ namespace ReVanced_Patcher.NET
             ReVanced.CheckPatches();
             ReVanced.CheckIntegrations();
 
-            if (string.IsNullOrEmpty(ReVanced.CLI) || 
-                string.IsNullOrEmpty(ReVanced.Patches) || 
-                string.IsNullOrEmpty(ReVanced.Integrations) || 
+            if (string.IsNullOrEmpty(ReVanced.CLI) ||
+                string.IsNullOrEmpty(ReVanced.Patches) ||
+                string.IsNullOrEmpty(ReVanced.Integrations) ||
                 string.IsNullOrEmpty(ReVanced.Patches_Json))
             {
                 return false;
@@ -59,7 +61,7 @@ namespace ReVanced_Patcher.NET
                     var package = patch.compatiblePackages?.Where(x => x.name!.EndsWith("com.google.android.youtube")).FirstOrDefault();
                     if (package != null)
                     {
-                        chkListBox_Patches.Items.Add(patch, true);
+                        chkListBox_Patches.Items.Add(patch, patch.isChecked);
                     }
                 }
             }
@@ -67,6 +69,7 @@ namespace ReVanced_Patcher.NET
 
         private async void btn_CheckReVanced_Click(object sender, EventArgs e)
         {
+            ReVanced.Variant = comboBox_Variant.Text;
             label_CLI_Version.Text = label_Patches_Version.Text = label_Integrations_Version.Text = string.Empty;
 
             btn_CheckReVanced.Enabled = false;
@@ -158,7 +161,7 @@ namespace ReVanced_Patcher.NET
             var integrations = Path.GetFileName(ReVanced.Integrations);
             var youtube = textBox_YouTube_APK.Text;
 
-            if (string.IsNullOrEmpty(java) || 
+            if (string.IsNullOrEmpty(java) ||
                 string.IsNullOrEmpty(cli) ||
                 string.IsNullOrEmpty(patches) ||
                 string.IsNullOrEmpty(integrations) ||
@@ -209,7 +212,7 @@ namespace ReVanced_Patcher.NET
 
         private void linkLabel_YouTube_APK_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://www.apkmirror.com/apk/google-inc/youtube") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo("https://www.apkmirror.com/apk/google-inc/youtube/youtube-18-05-40-release/") { UseShellExecute = true });
         }
 
         private void linkLabel_ReVanced_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -219,7 +222,12 @@ namespace ReVanced_Patcher.NET
 
         private void linkLabel_VancedMicroG_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://github.com/TeamVanced/VancedMicroG") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo("https://github.com/TeamVanced/VancedMicroG/releases") { UseShellExecute = true });
+        }
+
+        private void linkLabel_VancedMicroG2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("https://github.com/inotia00/VancedMicroG/releases") { UseShellExecute = true });
         }
     }
 }
